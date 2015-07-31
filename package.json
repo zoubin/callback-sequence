@@ -1,0 +1,32 @@
+{
+  "name": "callback-sequence",
+  "version": "0.0.1",
+  "description": "Make a new callback to run input callbacks in sequence",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoubin/callback-sequence.git"
+  },
+  "keywords": [
+    "gulp",
+    "task",
+    "sequence",
+    "callback",
+    "async"
+  ],
+  "author": "zoubin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zoubin/callback-sequence/issues"
+  },
+  "homepage": "https://github.com/zoubin/callback-sequence#readme",
+  "dependencies": {
+    "orchestrator": "^0.3.7"
+  },
+  "devDependencies": {
+    "tap": "^1.3.1"
+  }
+}
