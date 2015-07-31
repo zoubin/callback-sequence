@@ -49,3 +49,5 @@ Receives a `done` callback, which can be used as a gulp task callback.
 
 `cb` will run `callbacks` in sequence.
 
+## cb = sequence(cb1, cb2,...)
+
