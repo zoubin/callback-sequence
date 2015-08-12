@@ -4,7 +4,7 @@
   "description": "Make a new callback to run input callbacks in sequence",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "eslint . && tap test/*.js"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
     "orchestrator": "^0.3.7"
   },
   "devDependencies": {
+    "eslint": "^1.1.0",
     "tap": "^1.3.1"
   }
 }
