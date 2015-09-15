@@ -1,31 +1,31 @@
-var util = require('util');
 var runTask = require('orchestrator/lib/runTask');
+var noop = function () {};
 
-module.exports = function (callbacks) {
-  if (!callbacks) {
-    callbacks = [];
-  }
-  if (!Array.isArray(callbacks)) {
-    callbacks = Array.prototype.slice.call(arguments);
-  }
-  callbacks = callbacks.filter(util.isFunction);
+module.exports = sequence;
+module.exports.run = run;
 
-  var maxLen = callbacks.length;
-
+function sequence() {
+  var callbacks = [].concat.apply([], arguments);
   return function (done) {
-    done = done || function () {};
-
-    (function next(i) {
-      if (i >= maxLen) {
-        return done();
-      }
-      var cb = callbacks[i];
-      runTask(cb, function (err) {
-        if (err) {
-          return done(err);
-        }
-        next(++i);
-      });
-    })(0);
+    run(callbacks, done);
   };
-};
+}
+
+function run(callbacks, done) {
+  done = done || noop;
+  if (callbacks.length === 0) {
+    return done();
+  }
+  var cb = callbacks[0];
+  if (typeof cb === 'function') {
+    runTask(cb, next);
+  } else {
+    next(null);
+  }
+  function next(err) {
+    if (err) {
+      return done(err);
+    }
+    run(callbacks.slice(1), done);
+  }
+}

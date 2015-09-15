@@ -33,21 +33,22 @@ function read() {
 
 ```
 
-## cb = sequence(callbacks)
+## cb = sequence()
+
+Each argument passed in could be a [gulp task callback](https://github.com/gulpjs/gulp/blob/master/docs/API.md#gulptaskname-deps-fn),
+or an array containing such elements.
+
+`sequence` will create a callback to run all those specified tasks in appearance order.
+`cb` has signature `cb(done)`, and `done` is called after those tasks finish,
+with an error object or `null`.
+
+## sequence.run(callbacks, done)
 
 ### callbacks
-
 Type: `Array`
 
-Each element in `callbacks` is a [gulp task callback](https://github.com/gulpjs/gulp/blob/master/docs/API.md#gulptaskname-deps-fn).
+An array of [gulp task callback](https://github.com/gulpjs/gulp/blob/master/docs/API.md#gulptaskname-deps-fn)s.
 
-### cb
-
-Type: `Function`
-
-Receives a `done` callback, which can be used as a gulp task callback.
-
-`cb` will run `callbacks` in sequence.
-
-## cb = sequence(cb1, cb2,...)
+`done`, if specified, is called after all tasks finish,
+with an error object or `null`.
 
