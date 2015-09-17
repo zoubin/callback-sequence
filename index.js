@@ -1,31 +1,45 @@
-var runTask = require('orchestrator/lib/runTask');
+var bindAsync = require('run-callback').bindAsync;
+
 var noop = function () {};
+var undef;
 
 module.exports = sequence;
 module.exports.run = run;
+module.exports.last = {};
 
 function sequence() {
-  var callbacks = [].concat.apply([], arguments);
-  return function (done) {
-    run(callbacks, done);
-  };
+  return run.bind(null, arguments);
 }
 
-function run(callbacks, done) {
+function run(things, initial, done) {
+  var res = [];
+  if (arguments.length < 3) {
+    done = initial;
+    initial = undef;
+  }
   done = done || noop;
-  if (callbacks.length === 0) {
-    return done();
-  }
-  var cb = callbacks[0];
-  if (typeof cb === 'function') {
-    runTask(cb, next);
-  } else {
-    next(null);
-  }
-  function next(err) {
-    if (err) {
-      return done(err);
+
+  (function NEXT(i, len) {
+    if (i >= len) {
+      return done(null, res);
     }
-    run(callbacks.slice(1), done);
-  }
+    bind(things[i], res, initial)(function (err, r) {
+      if (err) {
+        return done(err, res);
+      }
+      res.push(r);
+      NEXT(++i, len);
+    });
+  }(0, things.length));
 }
+
+function bind(fn, res, initial) {
+  var args = [].concat(fn).map(function (j) {
+    if (j === sequence.last) {
+      return res.length === 0 ? initial : res[res.length - 1];
+    }
+    return j;
+  });
+  return bindAsync.apply(null, args);
+}
+

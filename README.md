@@ -1,9 +1,9 @@
 # callback-sequence
-Make a new callback to run input callbacks in sequence
+Make a new callback to run callbacks in sequence.
 
-It is meant to make it easy to construct a [gulp](https://npmjs.org/package/gulp) task from a sequence of callbacks.
+Callbacks can be made async like [gulp tasks](https://github.com/gulpjs/gulp/blob/master/docs/API.md#fn).
 
-## Usage
+# Usage
 
 ```javascript
 var sequence = require('callback-sequence');
@@ -33,22 +33,97 @@ function read() {
 
 ```
 
-## cb = sequence()
+# API
 
-Each argument passed in could be a [gulp task callback](https://github.com/gulpjs/gulp/blob/master/docs/API.md#gulptaskname-deps-fn),
-or an array containing such elements.
+## cb = sequence(task1, task2,...)
 
 `sequence` will create a callback to run all those specified tasks in appearance order.
-`cb` has signature `cb(done)`, and `done` is called after those tasks finish,
-with an error object or `null`.
 
-## sequence.run(callbacks, done)
+### cb([initial,] done)
+
+#### initial
+
+Type: `mixed`
+
+*Optional*
+
+If specified, it can be passed to the first task through `sequence.last`.
+See [task](#task).
+
+#### done
+
+Type: `Function`
+Signature: `done(err, results)`
+
+`done` is called after all tasks finish.
+
+`results` is an array containing all results of the tasks.
+
+### task
+
+Type: `Function`, `Array`
+
+If `Array`, the first element is treated as the callback,
+and elements following the callback are passed to it as arguments.
+
+```javascript
+var sequence = require('callback-sequence');
+
+function sum(a, b, next) {
+  process.nextTick(function () {
+    next(null, a + b);
+  });
+}
+sequence(
+  [sum, sequence.last, 1],
+  [sum, sequence.last, 1],
+  [sum, sequence.last, 1]
+)(1, function (err, res) {
+  console.log('Expected:', [2, 3, 4]);
+  console.log('Actual:', res);
+});
+```
+
+## sequence.run(callbacks, [initial, ] done)
 
 ### callbacks
+
 Type: `Array`
 
-An array of [gulp task callback](https://github.com/gulpjs/gulp/blob/master/docs/API.md#gulptaskname-deps-fn)s.
+Elements are [tasks](#task).
 
-`done`, if specified, is called after all tasks finish,
-with an error object or `null`.
+
+```javascript
+var sequence = require('callback-sequence');
+
+function sum(a, b, next) {
+  process.nextTick(function () {
+    next(null, a + b);
+  });
+}
+sequence.run([
+  [sum, sequence.last, 1],
+  [sum, sequence.last, 1],
+  [sum, sequence.last, 1],
+], 1, function (err, res) {
+  console.log('Expected:', [2, 3, 4]);
+  console.log('Actual:', res);
+});
+```
+
+## results
+
+Type: `Array`
+
+Store all the results of the tasks.
+
+It is passed to [done](#done) as the second argument.
+
+Sync callbacks deliver results with `return`,
+
+async callbacks with the last argument passed to it (`next(err, res)`),
+
+promisified callbacks with `resolve(res)`,
+
+and streamified callbacks always deliver `undefined`.
 
