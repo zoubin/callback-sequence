@@ -14,8 +14,10 @@ function sequence() {
 function run(things, initial, done) {
   var res = [];
   if (arguments.length < 3) {
-    done = initial;
-    initial = undef;
+    if (typeof initial === 'function') {
+      done = initial;
+      initial = undef;
+    }
   }
   done = done || noop;
 
