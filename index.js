@@ -21,8 +21,8 @@ function run(things, initial, done) {
   }
   done = done || noop;
 
-  (function NEXT(i, len) {
-    if (i >= len) {
+  (function NEXT(i) {
+    if (i >= things.length) {
       return done(null, res);
     }
     bind(things[i], res, initial)(function (err, r) {
@@ -30,9 +30,9 @@ function run(things, initial, done) {
         return done(err, res);
       }
       res.push(r);
-      NEXT(++i, len);
+      NEXT(++i);
     });
-  }(0, things.length));
+  }(0));
 }
 
 function bind(fn, res, initial) {

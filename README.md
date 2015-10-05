@@ -4,6 +4,7 @@ Make a new callback to run callbacks in sequence.
 Callbacks can be made async like [gulp tasks](https://github.com/gulpjs/gulp/blob/master/docs/API.md#fn).
 
 # Usage
+[![npm](https://nodei.co/npm/callback-sequence.png)](https://www.npmjs.com/package/callback-sequence)
 
 ```javascript
 var sequence = require('callback-sequence');
@@ -111,6 +112,29 @@ sequence.run([
 });
 ```
 
+Actually, you can dynamically add callbacks:
+```javascript
+var sequence = require('callback-sequence');
+
+var tasks = [task];
+var count = 0;
+function task(next) {
+  process.nextTick(function () {
+    count++;
+    if (count < 5) {
+      tasks.push(task);
+    }
+    next(null, count);
+  });
+}
+sequence.run(tasks, function (err, res) {
+  console.log(res);
+  // [ 1, 2, 3, 4, 5 ]
+});
+
+```
+
+
 ## results
 
 Type: `Array`
@@ -126,4 +150,6 @@ async callbacks with the last argument passed to it (`next(err, res)`),
 promisified callbacks with `resolve(res)`,
 
 and streamified callbacks always deliver `undefined`.
+
+# [Changelog](changelog.md)
 
