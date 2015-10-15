@@ -1,10 +1,16 @@
 # callback-sequence
 Make a new callback to run callbacks in sequence.
 
+[![npm](https://nodei.co/npm/callback-sequence.png?downloads=true)](https://www.npmjs.org/package/callback-sequence)
+
+[![version](https://img.shields.io/npm/v/callback-sequence.svg)](https://www.npmjs.org/package/callback-sequence)
+[![status](https://travis-ci.org/zoubin/callback-sequence.svg?branch=master)](https://travis-ci.org/zoubin/callback-sequence)
+[![dependencies](https://david-dm.org/zoubin/callback-sequence.svg)](https://david-dm.org/zoubin/callback-sequence)
+[![devDependencies](https://david-dm.org/zoubin/callback-sequence/dev-status.svg)](https://david-dm.org/zoubin/callback-sequence#info=devDependencies)
+
 Callbacks can be made async like [gulp tasks](https://github.com/gulpjs/gulp/blob/master/docs/API.md#fn).
 
 # Usage
-[![npm](https://nodei.co/npm/callback-sequence.png)](https://www.npmjs.com/package/callback-sequence)
 
 ```javascript
 var sequence = require('callback-sequence');
