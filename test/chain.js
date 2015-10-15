@@ -1,47 +1,46 @@
-var test = require('tap').test;
-var sequence = require('..');
-var run = sequence.run;
-var Stream = require('stream');
+import test from 'tape'
+import { last, run } from '..'
+import { Readable } from 'stream'
 
 test('chain', function(t) {
-  t.plan(2);
-  var streamRes = [];
+  t.plan(2)
+  let streamRes = []
   run(
     [
-      function (next) {
-        process.nextTick(function () {
-          next(null, 1);
-        });
+      (next) => {
+        process.nextTick(() => {
+          next(null, 1)
+        })
       },
-      function () {
-        return new Promise(function (rs) {
-          process.nextTick(function () {
-            rs([2, 3]);
-          });
-        });
+      () => {
+        return new Promise((rs) => {
+          process.nextTick(() => {
+            rs([2, 3])
+          })
+        })
       },
-      function () {
-        return [4, 5];
+      () => {
+        return [4, 5]
       },
-      [function (data) {
-        var rs = Stream.Readable({ objectMode: true });
-        data = data.slice();
+      [(data) => {
+        let rs = Readable({ objectMode: true })
+        data = data.slice()
         rs._read = function () {
           if (data.length) {
-            this.push(data.pop());
+            this.push(data.pop())
           } else {
-            this.push(null);
+            this.push(null)
           }
-        };
-        process.nextTick(function () {
-          rs.on('data', function (d) {
-            streamRes.push(d);
-          });
-        });
-        return rs;
-      }, sequence.last],
+        }
+        process.nextTick(() => {
+          rs.on('data', (d) => {
+            streamRes.push(d)
+          })
+        })
+        return rs
+      }, last],
     ],
-    function (err, res) {
+    (err, res) => {
       t.same(
         res,
         [
@@ -50,9 +49,9 @@ test('chain', function(t) {
           [4, 5],
           undefined,
         ]
-      );
-      t.same(streamRes, [5, 4]);
+      )
+      t.same(streamRes, [5, 4])
     }
-  );
-});
+  )
+})
 

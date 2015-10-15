@@ -1,23 +1,22 @@
-var test = require('tap').test;
-var sequence = require('..');
-var run = sequence.run;
+import test from 'tape'
+import { run } from '..'
 
 test('dynamic', function(t) {
-  t.plan(1);
-  var tasks = [task];
-  var count = 0;
+  t.plan(1)
+  let tasks = [task]
+  let count = 0
 
   function task(next) {
-    process.nextTick(function () {
-      count++;
+    process.nextTick(() => {
+      count++
       if (count < 5) {
-        tasks.push(task);
+        tasks.push(task)
       }
-      next(null, count);
-    });
+      next(null, count)
+    })
   }
-  run(tasks, function (err, res) {
-    t.same(res, [1, 2, 3, 4, 5]);
-  });
-});
+  run(tasks, (err, res) => {
+    t.same(res, [1, 2, 3, 4, 5])
+  })
+})
 
