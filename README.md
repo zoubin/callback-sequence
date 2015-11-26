@@ -1,8 +1,6 @@
 # callback-sequence
 Make a new callback to run callbacks in sequence.
 
-[![npm](https://nodei.co/npm/callback-sequence.png?downloads=true)](https://www.npmjs.org/package/callback-sequence)
-
 [![version](https://img.shields.io/npm/v/callback-sequence.svg)](https://www.npmjs.org/package/callback-sequence)
 [![status](https://travis-ci.org/zoubin/callback-sequence.svg?branch=master)](https://travis-ci.org/zoubin/callback-sequence)
 [![dependencies](https://david-dm.org/zoubin/callback-sequence.svg)](https://david-dm.org/zoubin/callback-sequence)
