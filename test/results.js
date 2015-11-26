@@ -1,6 +1,6 @@
-import test from 'tape'
-import { run } from '..'
-import { Readable } from 'stream'
+var test = require('tape')
+var run = require('..').run
+var Readable = require('stream').Readable
 
 test('sync', function(t) {
   run(
@@ -31,12 +31,12 @@ test('sync', function(t) {
 
 test('stream', function(t) {
   t.plan(2)
-  let streamRes = []
+  var streamRes = []
   run(
     [
       function () {
-        let rs = Readable({ objectMode: true })
-        let data = [1, 2]
+        var rs = Readable({ objectMode: true })
+        var data = [1, 2]
         rs._read = function () {
           if (data.length) {
             this.push(data.pop())
@@ -44,7 +44,7 @@ test('stream', function(t) {
             this.push(null)
           }
         }
-        process.nextTick(() => {
+        process.nextTick(function () {
           rs.on('data', function (d) {
             streamRes.push(d)
           })

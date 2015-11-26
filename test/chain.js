@@ -1,29 +1,31 @@
-import test from 'tape'
-import { last, run } from '..'
-import { Readable } from 'stream'
+var test = require('tape')
+var _ = require('..')
+var last = _.last
+var run = _.run
+var Readable = require('stream').Readable
 
 test('chain', function(t) {
   t.plan(2)
-  let streamRes = []
+  var streamRes = []
   run(
     [
-      (next) => {
-        process.nextTick(() => {
+      function (next) {
+        process.nextTick(function () {
           next(null, 1)
         })
       },
-      () => {
-        return new Promise((rs) => {
-          process.nextTick(() => {
+      function () {
+        return new Promise(function (rs) {
+          process.nextTick(function () {
             rs([2, 3])
           })
         })
       },
-      () => {
+      function () {
         return [4, 5]
       },
-      [(data) => {
-        let rs = Readable({ objectMode: true })
+      [function (data) {
+        var rs = Readable({ objectMode: true })
         data = data.slice()
         rs._read = function () {
           if (data.length) {
@@ -32,15 +34,15 @@ test('chain', function(t) {
             this.push(null)
           }
         }
-        process.nextTick(() => {
-          rs.on('data', (d) => {
+        process.nextTick(function () {
+          rs.on('data', function (d) {
             streamRes.push(d)
           })
         })
         return rs
       }, last],
     ],
-    (err, res) => {
+    function (err, res) {
       t.same(
         res,
         [

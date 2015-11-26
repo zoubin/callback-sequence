@@ -1,5 +1,6 @@
-import test from 'tape'
-import sequence, { last } from '..'
+var test = require('tape')
+var sequence = require('..')
+var last = sequence.last
 
 test('recursive', function(t) {
   t.plan(1)
@@ -12,7 +13,7 @@ test('recursive', function(t) {
     [sum, last, 1],
     [sum, last, 1],
     [sequence([sum, last, 1], [sum, last, 1]), last]
-  )(1, (err, res) => {
+  )(1, function (err, res) {
     t.same(res, [2, 3, [4, 5]])
   })
 })

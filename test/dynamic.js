@@ -1,13 +1,13 @@
-import test from 'tape'
-import { run } from '..'
+var test = require('tape')
+var run = require('..').run
 
 test('dynamic', function(t) {
   t.plan(1)
-  let tasks = [task]
-  let count = 0
+  var tasks = [task]
+  var count = 0
 
   function task(next) {
-    process.nextTick(() => {
+    process.nextTick(function () {
       count++
       if (count < 5) {
         tasks.push(task)
@@ -15,7 +15,7 @@ test('dynamic', function(t) {
       next(null, count)
     })
   }
-  run(tasks, (err, res) => {
+  run(tasks, function (err, res) {
     t.same(res, [1, 2, 3, 4, 5])
   })
 })

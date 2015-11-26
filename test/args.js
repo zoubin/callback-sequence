@@ -1,5 +1,8 @@
-import test from 'tape'
-import { first, last, run } from '..'
+var test = require('tape')
+var _ = require('..')
+var first = _.first
+var last = _.last
+var run = _.run
 
 test('last', function(t) {
   t.plan(1)
@@ -15,7 +18,7 @@ test('last', function(t) {
       [sum, last, 1],
     ],
     1,
-    (err, res) => {
+    function (err, res) {
       t.same(res, [2, 3, 4])
     }
   )
@@ -24,7 +27,7 @@ test('last', function(t) {
 test('first', function(t) {
   t.plan(1)
   function order(a, b, next) {
-    process.nextTick(() => {
+    process.nextTick(function () {
       next(null, a + b)
     })
   }
@@ -35,7 +38,7 @@ test('first', function(t) {
       [order, first, 3],
     ],
     10,
-    (err, res) => {
+    function (err, res) {
       t.same(res, [11, 12, 13])
     }
   )
