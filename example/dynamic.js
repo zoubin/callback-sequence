@@ -1,18 +1,19 @@
-var sequence = require('..');
+var run = require('..').run
 
-var tasks = [task];
-var count = 0;
-function task(next) {
+var count = 5
+var tasks = []
+
+function task(res, next) {
   process.nextTick(function () {
-    count++;
-    if (count < 5) {
-      tasks.push(task);
+    res.push(count)
+    if (--count > 0) {
+      tasks.push(task)
     }
-    next(null, count);
-  });
+    next(null, res)
+  })
 }
-sequence.run(tasks, function (err, res) {
-  console.log(res);
-  // [ 1, 2, 3, 4, 5 ]
-});
+run(tasks, [[]]).then(function (res) {
+  console.log(res)
+})
 
+tasks.push(task)

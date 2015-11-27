@@ -2,21 +2,23 @@ var test = require('tape')
 var run = require('..').run
 
 test('dynamic', function(t) {
-  t.plan(1)
-  var tasks = [task]
-  var count = 0
+  var count = 5
+  t.plan(count + 1)
+  var tasks = []
 
   function task(next) {
     process.nextTick(function () {
-      count++
-      if (count < 5) {
+      t.ok(true)
+      if (--count > 0) {
         tasks.push(task)
       }
-      next(null, count)
+      next()
     })
   }
-  run(tasks, function (err, res) {
-    t.same(res, [1, 2, 3, 4, 5])
+  run(tasks).then(function () {
+    t.ok(true)
   })
+
+  tasks.push(task)
 })
 

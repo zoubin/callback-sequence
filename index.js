@@ -1,49 +1,58 @@
-var bindAsync = require('run-callback').bindAsync
-
-var last = {}
-var first = {}
+var promisify = require('node-promisify')
+var runCallback = promisify(require('run-callback'), -1)
 
 exports = module.exports = function () {
-  return run.bind(null, arguments)
+  var cbs = Array.prototype.slice.call(arguments)
+  return function () {
+    return run(cbs)
+  }
 }
 
 exports.run = run
-exports.first = first
-exports.last = last
+exports.parallel = parallel
 
-function run(things, initial, done) {
-  if (arguments.length < 3) {
-    if (typeof initial === 'function') {
-      done = initial
-      initial = null
-    }
+function run(cbs, args, i) {
+  i = ~~i
+  args = defined(args) ? args : []
+
+  // NOTE: tasks can be pushed to `cbs` dynamically
+  var cb = cbs[i]
+  var ret
+  if (typeof cb === 'function') {
+    ++i
+    ret = runCallback([cb].concat(args)).then(valid)
+  } else if (Array.isArray(cb)) {
+    ++i
+    ret = parallel(cb, args)
+  } else {
+    ret = Promise.resolve([].concat(args))
   }
-
-  next(things, initial, done || function () {}, [], 0)
-}
-
-function next(things, initial, done, res, i) {
-  if (i >= things.length) {
-    return done(null, res)
-  }
-  bind(things[i], res, initial)(function (err, r) {
-    if (err) {
-      return done(err, res)
+  return ret.then(function (res) {
+    if (i < cbs.length) {
+      return run(cbs, res, i)
     }
-    res.push(r)
-    next(things, initial, done, res, ++i)
+    return res
   })
 }
 
-function bind(fn, res, initial) {
-  return bindAsync.apply(null, [].concat(fn).map(function (j) {
-    if (j === last) {
-      return res.length === 0 ? initial : res[res.length - 1]
+function parallel(cbs, args) {
+  args = defined(args) ? args : []
+  return Promise.all(cbs.map(function (cb) {
+    if (typeof cb === 'function') {
+      return runCallback([cb].concat(args)).then(valid)
     }
-    if (j === first) {
-      return initial == null ? res[0] : initial
+    if (Array.isArray(cb)) {
+      return run(cb, args, 0)
     }
-    return j
+    return Promise.resolve([].concat(args))
   }))
+}
+
+function valid(res) {
+  return res.filter(defined)
+}
+
+function defined(o) {
+  return typeof o !== 'undefined'
 }
 

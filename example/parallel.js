@@ -1,6 +1,6 @@
-var run = require('..').run
+var parallel = require('..').parallel
 
-run([
+parallel([
   function () { console.log(1) },
   [
     function (cb) {

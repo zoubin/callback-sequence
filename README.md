@@ -1,5 +1,5 @@
 # callback-sequence
-Make a new callback to run callbacks in sequence.
+Make a new callback to run callbacks in sequence or parallel.
 
 [![version](https://img.shields.io/npm/v/callback-sequence.svg)](https://www.npmjs.org/package/callback-sequence)
 [![status](https://travis-ci.org/zoubin/callback-sequence.svg?branch=master)](https://travis-ci.org/zoubin/callback-sequence)
@@ -8,152 +8,189 @@ Make a new callback to run callbacks in sequence.
 
 Callbacks can be made async like [gulp tasks](https://github.com/gulpjs/gulp/blob/master/docs/API.md#fn).
 
-# Usage
+## Example
 
 ```javascript
-var sequence = require('callback-sequence');
-var Readable = require('stream').Readable;
-var gulp = require('gulp');
+var sequence = require('callback-sequence')
+var Readable = require('stream').Readable
+var gulp = require('gulp')
 
-gulp.task('publish', sequence(
-  read, lint, warn, bump
-));
+gulp.task('sequence', sequence(
+  sync, async, promise, stream
+))
 
-function lint() {
+gulp.task('parallel', sequence(
+  [sync, async, promise, stream]
+))
+
+gulp.task('parallel-nested', sequence(
+  // `async` and `promise` will be run in parallel
+  sync, [async, promise], stream
+))
+
+gulp.task('sequence-nested', sequence(
+  // `async` and `promise` will be run in sequence
+  [sync, [async, promise], stream]
+))
+
+function sync() {
 }
 
-function warn(cb) {
-  process.nextTick(cb);
+function async(cb) {
+  process.nextTick(cb)
 }
 
-function bump() {
-  return Promise.resolve();
+function promise() {
+  return Promise.resolve()
 }
 
-function read() {
-  var s = Readable();
-  s.push(null);
-  return s;
+function stream() {
+  var s = Readable()
+  s.push(null)
+  return s
 }
 
 ```
 
-# API
+## API
 
-## cb = sequence(task1, task2,...)
+### cb = sequence(...tasks)
+Return a callback to run the specified tasks in appearance order.
 
-`sequence` will create a callback to run all those specified tasks in appearance order.
-
-### cb([initial,] done)
-
-#### initial
-
-Type: `mixed`
-
-*Optional*
-
-If specified, it can be passed to the first task through `sequence.last`.
-See [task](#task).
-
-#### done
-
-Type: `Function`
-Signature: `done(err, results)`
-
-`done` is called after all tasks finish.
-
-`results` is an array containing all results of the tasks.
-
-### task
-
-Type: `Function`, `Array`
-
-If `Array`, the first element is treated as the callback,
-and elements following the callback are passed to it as arguments.
+`cb` will return a promise.
 
 ```javascript
-var sequence = require('callback-sequence');
+var sequence = require('callback-sequence')
 
-function sum(a, b, next) {
-  process.nextTick(function () {
-    next(null, a + b);
-  });
-}
 sequence(
-  [sum, sequence.last, 1],
-  [sum, sequence.last, 1],
-  [sum, sequence.last, 1]
-)(1, function (err, res) {
-  console.log('Expected:', [2, 3, 4]);
-  console.log('Actual:', res);
-});
+  function () { console.log(1) },
+  [
+    function (cb) {
+      setTimeout(function() {
+        console.log(3)
+        cb()
+      }, 0)
+    },
+    function () {
+      return new Promise(function (resolve) {
+        process.nextTick(function () {
+          console.log(2)
+          resolve()
+        })
+      })
+    },
+  ],
+  function () { console.log(4) },
+)().then(function () {
+  console.log('DONE')
+})
+
+// 1
+// 2
+// 3
+// 4
+// DONE
+
+
 ```
 
-## sequence.run(callbacks, [initial, ] done)
+### res = sequence.run(tasks, initialArgs)
+Run the specified tasks in sequence.
 
-### callbacks
-
-Type: `Array`
-
-Elements are [tasks](#task).
-
+* `tasks`: Type: `Array`. If a task is specified as an array of subtasks, those tasks will be run with `sequence.parallel`
+* `initialArgs`: Type: `Array`. Arguments passed to the first task.
+* `res`: Type: `Promise`. Resolves to an array of results created by the last task.
 
 ```javascript
-var sequence = require('callback-sequence');
+var sequence = require('callback-sequence')
 
-function sum(a, b, next) {
-  process.nextTick(function () {
-    next(null, a + b);
-  });
-}
-sequence.run([
-  [sum, sequence.last, 1],
-  [sum, sequence.last, 1],
-  [sum, sequence.last, 1],
-], 1, function (err, res) {
-  console.log('Expected:', [2, 3, 4]);
-  console.log('Actual:', res);
-});
+run([
+  function (a, b) {
+    t.same([a, b], [1, 2])
+    return a + b
+  },
+  function (res, cb) {
+    t.same(res, 3)
+    setTimeout(function() {
+      cb(null, res, 4)
+    }, 0)
+  },
+], [1, 2])
+.then(function (res) {
+  // [3, 4]
+})
+
 ```
 
-Actually, you can dynamically add callbacks:
-```javascript
-var sequence = require('callback-sequence');
+Actually, you can add callbacks dynamically:
 
-var tasks = [task];
-var count = 0;
-function task(next) {
+```javascript
+var run = require('callback-sequence').run
+
+var count = 5
+var tasks = []
+
+function task(res, next) {
   process.nextTick(function () {
-    count++;
-    if (count < 5) {
-      tasks.push(task);
+    res.push(count)
+    if (--count > 0) {
+      tasks.push(task)
     }
-    next(null, count);
-  });
+    next(null, res)
+  })
 }
-sequence.run(tasks, function (err, res) {
-  console.log(res);
-  // [ 1, 2, 3, 4, 5 ]
-});
+run(tasks, [[]]).then(function (res) {
+  // [ [5, 4, 3, 2, 1] ]
+  console.log(res)
+})
+
+tasks.push(task)
 
 ```
 
+### res = sequence.parallel(tasks, initialArgs)
+Run the specified tasks in parallel.
 
-## results
+* `tasks`: Type: `Array`. If a task is specified as an array of subtasks, those tasks will be run with `sequence.run`.
+* `initialArgs`: Type: `Array`. Arguments passed to all tasks.
+* `res`: Type: `Promise`. Resolves to an array of results created by the call tasks.
 
-Type: `Array`
+```javascript
+var parallel = require('callback-sequence').parallel
 
-Store all the results of the tasks.
+parallel([
+  function () { console.log(1) },
+  [
+    function (cb) {
+      setTimeout(function() {
+        console.log(3)
+        cb()
+      }, 0)
+    },
+    function () {
+      return new Promise(function (resolve) {
+        process.nextTick(function () {
+          console.log(2)
+          resolve()
+        })
+      })
+    },
+  ],
+  function () { console.log(4) },
+]
+)
+.then(function () {
+  console.log('DONE')
+})
 
-It is passed to [done](#done) as the second argument.
+// 1
+// 4
+// 3
+// 2
+// DONE
 
-Sync callbacks deliver results with `return`,
 
-async callbacks with the last argument passed to it (`next(err, res)`),
+```
 
-promisified callbacks with `resolve(res)`,
-
-and streamified callbacks always deliver `undefined`.
-
-# [Changelog](changelog.md)
+## [Changelog](changelog.md)
 
