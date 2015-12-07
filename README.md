@@ -1,6 +1,7 @@
 # callback-sequence
 [![version](https://img.shields.io/npm/v/callback-sequence.svg)](https://www.npmjs.org/package/callback-sequence)
 [![status](https://travis-ci.org/zoubin/callback-sequence.svg?branch=master)](https://travis-ci.org/zoubin/callback-sequence)
+[![coverage](https://img.shields.io/coveralls/zoubin/callback-sequence.svg)](https://coveralls.io/github/zoubin/callback-sequence)
 [![dependencies](https://david-dm.org/zoubin/callback-sequence.svg)](https://david-dm.org/zoubin/callback-sequence)
 [![devDependencies](https://david-dm.org/zoubin/callback-sequence/dev-status.svg)](https://david-dm.org/zoubin/callback-sequence#info=devDependencies)
 
