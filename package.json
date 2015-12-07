@@ -4,8 +4,9 @@
   "description": "Make a new callback to run input callbacks in sequence",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && task-tape test/*.js | tap-summary",
-    "lint": "eslint *.js lib/**/*.js test/*.js bin/*.js"
+    "test": "npm run lint && tap --cov test/*.js",
+    "lint": "eslint *.js 'lib/**/*.js' test/*.js bin/*.js",
+    "coveralls": "COVERALLS_REPO_TOKEN=MNaz7xU7XD7Ei8Z09KxbkNQNzzBtQJWyZ npm test"
   },
   "repository": {
     "type": "git",
@@ -25,13 +26,10 @@
   },
   "homepage": "https://github.com/zoubin/callback-sequence#readme",
   "dependencies": {
-    "node-promisify": "^1.0.0",
-    "run-callback": "^2.2.0"
+    "run-callback": "^3.0.0"
   },
   "devDependencies": {
     "eslint": "^1.10.1",
-    "tap-summary": "^1.0.0",
-    "tape": "^4.2.0",
-    "task-tape": "^1.0.0"
+    "tap": "^2.3.1"
   }
 }

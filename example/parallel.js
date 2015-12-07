@@ -1,27 +1,30 @@
 var parallel = require('..').parallel
 
+var res = []
 parallel([
-  function () { console.log(1) },
+  function () { res.push(1) },
   [
-    function (cb) {
-      setTimeout(function() {
-        console.log(3)
-        cb()
-      }, 0)
-    },
     function () {
-      return new Promise(function (resolve) {
-        process.nextTick(function () {
-          console.log(2)
-          resolve()
-        })
+      return Promise.resolve().then(function () {
+        res.push(4)
       })
     },
+    function () { res.push(5) },
   ],
-  function () { console.log(4) },
+  function (cb) {
+    setTimeout(function() {
+      res.push(3)
+      cb()
+    }, 0)
+  },
+  function (cb) {
+    res.push(2)
+    cb()
+  },
 ]
 )
 .then(function () {
-  console.log('DONE')
+  // [1, 2, 4, 5, 3]
+  console.log(res)
 })
 

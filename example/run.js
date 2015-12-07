@@ -1,27 +1,29 @@
 var run = require('..').run
 
+var res = []
 run([
-  function () { console.log(1) },
+  function () { res.push(1) },
   [
     function (cb) {
       setTimeout(function() {
-        console.log(3)
+        res.push(3)
         cb()
       }, 0)
     },
     function () {
       return new Promise(function (resolve) {
         process.nextTick(function () {
-          console.log(2)
+          res.push(2)
           resolve()
         })
       })
     },
   ],
-  function () { console.log(4) },
+  function () { res.push(4) },
 ]
 )
 .then(function () {
-  console.log('DONE')
+  // [1, 2, 3, 4]
+  console.log(res)
 })
 

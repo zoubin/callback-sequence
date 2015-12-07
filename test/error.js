@@ -1,4 +1,4 @@
-var test = require('tape')
+var test = require('tap').test
 var run = require('..').run
 
 test('error', function(t) {
@@ -12,7 +12,7 @@ test('error', function(t) {
       cb(ex)
     },
     function () {
-      t.ok(true)
+      t.ok(false)
     },
   ]).catch(function (err) {
     t.same(err, ex)
