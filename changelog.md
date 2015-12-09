@@ -1,4 +1,12 @@
-<!-- a5016b8 1449485237000 -->
+<!-- df9c29a 1449647658000 -->
+
+## [v3.1.0](https://github.com/zoubin/callback-sequence/commit/df9c29a) (2015-12-09)
+
+* [[`30a2f05`](https://github.com/zoubin/callback-sequence/commit/30a2f05)] Support custom runner
+
+* [[`a286a0e`](https://github.com/zoubin/callback-sequence/commit/a286a0e)] Add coverage badge
+
+* [[`1cc8e5c`](https://github.com/zoubin/callback-sequence/commit/1cc8e5c)] CHANGELOG
 
 ## [v3.0.0](https://github.com/zoubin/callback-sequence/commit/a5016b8) (2015-12-07)
 
