@@ -140,15 +140,35 @@ test('thunkify', function(t) {
   })
 })
 
-test('disabled', function(t) {
+test('disabled', function(tt) {
   var scheduler = Runner({ output: false })
-  return scheduler.sequence([
-    function (next) {
-      next(null, 1, 2)
-    },
-  ])
-  .then(function (res) {
-    t.equal(typeof res, 'undefined')
+  tt.test('sequence', function(t) {
+    return scheduler.sequence([
+      function (next) {
+        next(null, 1)
+      },
+      function (a, next) {
+        t.equal(a, 1)
+        next(null, 1, 2)
+      },
+    ])
+    .then(function (res) {
+      t.same(res, [])
+    })
   })
+  tt.test('parallel', function(t) {
+    return scheduler.parallel([
+      function (next) {
+        next(null, 1)
+      },
+      function (next) {
+        next(null, 1, 2)
+      },
+    ])
+    .then(function (res) {
+      t.same(res, [])
+    })
+  })
+  tt.end()
 })
 

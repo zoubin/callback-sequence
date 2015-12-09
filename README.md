@@ -242,5 +242,19 @@ Type: `Boolean`
 
 Default: `true`
 
+##### run
+Specify a runner function to run each callback.
+
+Type: `Function`, `Object`
+
+Default: `null`
+
+If `Function`, it receives a callback followed by a list of arguments,
+and should return a promise to fetch the results (`Array`).
+
+If `Object`, it is passed to
+[`Runner of run-callback`](https://github.com/zoubin/run-callback#runner--runrunner)
+to create a runner function.
+
 ## [Changelog](changelog.md)
 

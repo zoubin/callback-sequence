@@ -84,3 +84,19 @@ test('disabled', function(t) {
   ], [1, 2])
 })
 
+test('single function', function(tt) {
+  tt.test('sequence', function(t) {
+    return run(function (next) {
+      t.equal(arguments.length, 1)
+      next()
+    })
+  })
+  tt.test('parallel', function(t) {
+    return parallel(function (next) {
+      t.equal(arguments.length, 1)
+      next()
+    })
+  })
+  tt.end()
+})
+
