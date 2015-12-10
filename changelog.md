@@ -1,4 +1,10 @@
-<!-- df9c29a 1449647658000 -->
+<!-- dbeb55e 1449731578000 -->
+
+## [v3.2.0](https://github.com/zoubin/callback-sequence/commit/dbeb55e) (2015-12-10)
+
+* [[`d6f4c65`](https://github.com/zoubin/callback-sequence/commit/d6f4c65)] Support series
+
+* [[`4aef4f9`](https://github.com/zoubin/callback-sequence/commit/4aef4f9)] CHANGELOG
 
 ## [v3.1.0](https://github.com/zoubin/callback-sequence/commit/df9c29a) (2015-12-09)
 
