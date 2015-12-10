@@ -1,6 +1,6 @@
 {
   "name": "callback-sequence",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Make a new callback to run input callbacks in sequence",
   "main": "index.js",
   "scripts": {
