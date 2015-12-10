@@ -1,7 +1,8 @@
-var parallel = require('..').parallel
+var Runner = require('..').Runner
+var runner = Runner()
 
 var res = []
-parallel([
+runner.parallel([
   function () { res.push(1) },
   [
     function () {
@@ -21,8 +22,7 @@ parallel([
     res.push(2)
     cb()
   },
-]
-)
+])
 .then(function () {
   // [1, 2, 4, 5, 3]
   console.log(res)

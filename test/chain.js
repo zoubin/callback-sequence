@@ -31,6 +31,17 @@ test('sync', function(t) {
       },
     ])
   })
+  .then(function () {
+    return run([
+      function () {
+        return [1]
+      },
+      function (a, next) {
+        t.same(a, [1])
+        next()
+      },
+    ])
+  })
 })
 
 test('async', function(t) {

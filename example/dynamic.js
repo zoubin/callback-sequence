@@ -1,4 +1,5 @@
-var run = require('..').run
+var Runner = require('..').Runner
+var runner = Runner()
 
 var count = 5
 var tasks = []
@@ -13,7 +14,7 @@ function task(next) {
     next()
   })
 }
-run(tasks).then(function () {
+runner.sequence(tasks).then(function () {
   // [5, 4, 3, 2, 1]
   console.log(res)
 })

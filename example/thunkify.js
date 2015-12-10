@@ -1,23 +1,23 @@
-var thunkify = require('..')
+var Runner = require('..').Runner
+var runner = Runner()
 
-var res = []
-thunkify(
-  function () {
-    res.push(1)
+runner.thunkify(
+  function (res) {
+    return res + 1
   },
-  function (next) {
+  function (res) {
+    return Promise.resolve()
+      .then(function () {
+        return res + 1
+      })
+  },
+  function (res, next) {
     process.nextTick(function () {
-      res.push(2)
-      next()
-    })
-  },
-  function () {
-    return Promise.resolve().then(function () {
-      res.push(3)
+      next(null, res - 1, res + 1)
     })
   }
-)()
-.then(function () {
-  // [1, 2, 3]
+)(1)
+.then(function (res) {
+  // [ 2, 4 ]
   console.log(res)
 })
